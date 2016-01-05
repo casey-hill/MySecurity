@@ -1,0 +1,230 @@
+//*****************************************************************************
+#include <SoftwareSerial.h>
+#include <SmartThings.h>
+
+//*****************************************************************************
+// Pin Definitions
+//*****************************************************************************
+#define PIN_THING_RX                3
+#define PIN_THING_TX                2
+#define PIN_RESERVED                6     
+
+#define PIN_ZONE1_CONTACT         9     // input
+#define PIN_ZONE2_CONTACT         10    // input
+#define PIN_ZONE3_CONTACT         11    // input
+#define PIN_ZONE4_CONTACT         12    // input
+#define PIN_DIGITAL               13    // output
+
+#define OPEN                  1     // HIGH
+#define CLOSED                0     // LOW
+#define UNKNOWN               2     // --- reset / force update
+
+#define NUMBER_OF_ZONES       4     // TODO: add zones to do a loop; The total number of zones you will have
+
+//*****************************************************************************
+// Global Variables
+//*****************************************************************************
+SmartThingsCallout_t messageCallout;    // call out function forward decalaration
+SmartThings smartthing(PIN_THING_RX, PIN_THING_TX, messageCallout);  // constructor
+
+int Zone1Status = UNKNOWN;
+int Zone2Status = UNKNOWN;
+int Zone3Status = UNKNOWN;
+int Zone4Status = UNKNOWN;
+
+bool isDebugEnabled=true;    // enable or disable debug in this example
+int stateLED;           // state to track last set value of LED
+int stateNetwork;       // state of the network
+
+//*****************************************************************************
+// Logic
+//*****************************************************************************
+
+int contactState(int pin)
+{
+  // LOW  -> closed
+  // HIGH -> open
+  return (digitalRead(pin) == HIGH)?CLOSED:OPEN;
+}
+
+void updateContactStatus()
+{
+  int currentStatus;
+  char* msg = NULL;
+
+  currentStatus = contactState(PIN_ZONE1_CONTACT);
+  if (Zone1Status != currentStatus)
+  {
+    Zone1Status = currentStatus;
+    if(Zone1Status == CLOSED) msg = "zone1 open";
+    else                     msg = "zone1 closed";
+
+    smartthing.shieldSetLED(0, 2, 0); // green
+    smartthing.send(msg);
+    if(isDebugEnabled) Serial.println(msg);
+    return; // only one message per loop
+  }
+  
+  currentStatus = contactState(PIN_ZONE2_CONTACT);
+  if (Zone2Status != currentStatus)
+  {
+    Zone2Status = currentStatus;
+    if(Zone2Status == CLOSED) msg = "zone2 open";
+    else                     msg = "zone2 closed";
+
+    smartthing.shieldSetLED(0, 2, 0); // green
+    smartthing.send(msg);
+    if(isDebugEnabled) Serial.println(msg);
+    return; // only one message per loop
+  }
+  /*
+  currentStatus = contactState(PIN_ZONE3_CONTACT);
+  if (Zone3Status != currentStatus)
+  {
+    Zone3Status = currentStatus;
+    if(Zone3Status == CLOSED) msg = "zone3 open";
+    else                     msg = "zone3 closed";
+    
+    smartthing.shieldSetLED(0, 2, 0); // green
+    smartthing.send(msg);
+    if(isDebugEnabled) Serial.println(msg);
+    return; // only one message per loop
+  }
+  
+  currentStatus = contactState(PIN_ZONE4_CONTACT);
+  if (Zone4Status != currentStatus)
+  {
+    Zone4Status = currentStatus;
+    if(Zone4Status == CLOSED) msg = "zone4 open";
+    else                     msg = "zone4 closed";
+
+    smartthing.shieldSetLED(0, 2, 0); // green
+    smartthing.send(msg);
+    if(isDebugEnabled) Serial.println(msg);
+    return; // only one message per loop
+  }
+*/
+
+}
+
+//*****************************************************************************
+void setNetworkStateLED()
+{
+  SmartThingsNetworkState_t tempState = smartthing.shieldGetLastNetworkState();
+  if (tempState != stateNetwork)
+  {
+    switch (tempState)
+    {
+      case STATE_NO_NETWORK:
+        if (isDebugEnabled) Serial.println("ST Network State is : NO_NETWORK");
+          smartthing.shieldSetLED(2, 2, 0); // red
+          break;
+      case STATE_JOINING:
+        if (isDebugEnabled) Serial.println("ST Network State is : JOINING");
+          smartthing.shieldSetLED(2, 2, 0); // yellow
+          break;
+      case STATE_JOINED:
+        if (isDebugEnabled) Serial.println("ST Network State is : JOINED");
+          smartthing.shieldSetLED(0, 0, 2); // blue
+
+          // force report of current door state
+          Zone1Status = UNKNOWN;
+          Zone2Status = UNKNOWN;
+          Zone3Status = UNKNOWN;
+          Zone4Status = UNKNOWN;
+  
+          break;
+      case STATE_JOINED_NOPARENT:
+        if (isDebugEnabled) Serial.println("ST Network State is : JOINED_NOPARENT");
+          smartthing.shieldSetLED(2, 0, 2); // purple
+          break;
+      case STATE_LEAVING:
+        if (isDebugEnabled) Serial.println("ST Network State is : LEAVING");
+          smartthing.shieldSetLED(2, 2, 0); // yellow
+          break;
+      default:
+      case STATE_UNKNOWN:
+        if (isDebugEnabled) Serial.println("ST Network State is : UNKNOWN");
+          smartthing.shieldSetLED(2, 0, 0); // red
+          break;
+    }
+    stateNetwork = tempState;
+  }
+}
+
+//*****************************************************************************
+// API Functions    | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+//                  V V V V V V V V V V V V V V V V V V V V V V V V V V V V V V
+//*****************************************************************************
+void setup()
+{
+  // setup default state of global variables
+  isDebugEnabled = true;
+  stateNetwork = STATE_JOINED;  // set to joined to keep state off if off
+
+  // setup hardware pins
+  
+  pinMode(PIN_ZONE1_CONTACT, INPUT);
+  pinMode(PIN_ZONE2_CONTACT, INPUT);
+  pinMode(PIN_ZONE3_CONTACT, INPUT);
+  pinMode(PIN_ZONE4_CONTACT, INPUT);
+
+  // setup pinups which implies you don't need a resistor
+  digitalWrite(PIN_ZONE1_CONTACT, HIGH);
+  digitalWrite(PIN_ZONE2_CONTACT, HIGH);
+  digitalWrite(PIN_ZONE3_CONTACT, HIGH);
+  digitalWrite(PIN_ZONE4_CONTACT, HIGH);
+  pinMode(PIN_ZONE1_CONTACT, HIGH);
+  pinMode(PIN_ZONE2_CONTACT, HIGH);
+  pinMode(PIN_ZONE3_CONTACT, HIGH);
+  pinMode(PIN_ZONE4_CONTACT, HIGH);
+  
+
+  if(isDebugEnabled)
+  { // setup debug serial port
+    Serial.begin(9600);         // setup serial with a baud rate of 9600
+    Serial.println("Starting up..");  // print out 'setup..' on start
+  }
+
+}
+
+//*****************************************************************************
+void loop()
+{
+  // run smartthing logic
+  smartthing.run();
+
+  // Check network connections (and send initial states on Join)
+  setNetworkStateLED();
+
+  if(stateNetwork == STATE_JOINED)
+  {
+    // Check the open/closed state of the doors
+    updateContactStatus();
+  }
+}
+
+//*****************************************************************************
+void messageCallout(String message)
+{
+  smartthing.shieldSetLED(2, 2, 2); // white
+
+  // if debug is enabled print out the received message
+  if(isDebugEnabled)
+  {
+    Serial.print("Received message: '");
+    Serial.print(message);
+    Serial.println("' ");
+  }
+
+  if(message.equals("poll"))
+  {
+    // if asked for polling update then force update by setting all devices to unknown.
+    Zone1Status = UNKNOWN;
+    Zone2Status = UNKNOWN;
+    Zone3Status = UNKNOWN;
+    Zone4Status = UNKNOWN;
+  }
+
+  smartthing.shieldSetLED(0, 0, 0); // off
+}
