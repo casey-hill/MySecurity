@@ -1,0 +1,44 @@
+/**
+ * Simulated Contact Sensor without interaction
+ * credit to STEVEN WEINSTEIN for his documentation
+ *
+ */
+metadata {
+	// Automatically generated. Make future change here.
+	definition (name: "Simulated Contact Sensor by casey", namespace: "cetheridge30", author: "Christopher Etheridge") {
+		    capability "Contact Sensor"
+        command "open"
+        command "close"
+
+	}
+
+	simulator {
+		status "open": "contact:open"
+		status "closed": "contact:closed"
+	}
+
+	tiles {
+		standardTile("contact", "device.contact", width: 2, height: 2) {
+			state("closed", label:'${name}', icon:"st.contact.contact.closed", backgroundColor:"#79b821")
+			state("open", label:'${name}', icon:"st.contact.contact.open", backgroundColor:"#ffa81e")
+		}
+		main "contact"
+		details "contact"
+	}
+}
+
+def parse(String description) {
+	def pair = description.split(":")
+	createEvent(name: pair[0].trim(), value: pair[1].trim())
+    log.trace "parsing"
+}
+
+def open() {
+	log.trace "open() is running"
+	sendEvent(name: "contact", value: "open")
+}
+
+def close() {
+	log.trace "close() is running"
+    sendEvent(name: "contact", value: "closed")
+}
