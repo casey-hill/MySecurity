@@ -6,10 +6,12 @@ Integration into an existing security system is doable.  In my situation, I want
 To the devices & Smartthings.
 
 You will need a few things to get this to work.
- 1) Smartthings app located here (optional)
- 2) Virtual device
- 3) Arduino and code 
- 4) Smartthings Shield (https://shop.smartthings.com/#!/products/smartthings-shield-arduino)
+ 1) Smartthings app located here (optional) (free)
+ 2) Virtual device (free)
+ 3) Arduino and code ($35 for the original but 3rd party $8)
+ 4) Smartthings Shield (https://shop.smartthings.com/#!/products/smartthings-shield-arduino) ($35 bucks ouch)
+ 5) Arduino kit ($14 just an easy way to prototype stuff)
+ 6) Reed sensors ($1 each)
  
  You can see the working solution here: https://www.youtube.com/watch?v=Z47ct-1E8KQ
  
