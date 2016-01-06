@@ -8,8 +8,8 @@ To the devices & Smartthings.
 You will need a few things to get this to work.
  1) Smartthings app located here (optional)
  2) Virtual device
- 3) Arduino and code
- 4) Smartthings Shield
+ 3) Arduino and code 
+ 4) Smartthings Shield (https://shop.smartthings.com/#!/products/smartthings-shield-arduino)
  
  You can see the working solution here: https://www.youtube.com/watch?v=Z47ct-1E8KQ
  
