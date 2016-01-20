@@ -20,6 +20,9 @@ You will need a few things to get this to work.
  
  You'll need to update the Arduino code for the pins you want to use but this demo uses pins 9, 10, & Ground.  Wire up on end of the first reed sensor to pin 9 & the other second wire to ground.  Wire up the second reed sensor to pin 10 and the second wire to ground.  No resister is required in this case because we are going to use the internal resister.
  
+ Download the arduino code
+ Install the arduino code include here too.  Upload it to the arduino and its ready to go.
+ 
  Joining the Arduino  
  Go ahead and join the arduino to smartthings.  At this point, its just doing a regular join by using the smartthings app.
  
