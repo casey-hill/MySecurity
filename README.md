@@ -23,7 +23,10 @@ You will need a few things to get this to work.
  Joining the Arduino
  Go ahead and join the arduino to smartthings.  At this point, its just doing a regular join by using the smartthings app.
  
- Assign the device type
+ In Smartthings API
+ Go in and create your device handler using the file included above called "virtual device".  Save it and publish it.
+ 
+ Assign the device type to the Arduino
  Going back to your devices, you need to find the arduino you just added.  Once there, edit the device and change the device type to the name of your device handler.
 
 
