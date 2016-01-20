@@ -16,18 +16,20 @@ You will need a few things to get this to work.
  You can see the working solution here: https://www.youtube.com/watch?v=Z47ct-1E8KQ
  
  
- Wiring up the Arduino
+ Wiring up the Arduino  
  
  You'll need to update the Arduino code for the pins you want to use but this demo uses pins 9, 10, & Ground.  Wire up on end of the first reed sensor to pin 9 & the other second wire to ground.  Wire up the second reed sensor to pin 10 and the second wire to ground.  No resister is required in this case because we are going to use the internal resister.
  
- Joining the Arduino
+ Joining the Arduino  
  Go ahead and join the arduino to smartthings.  At this point, its just doing a regular join by using the smartthings app.
  
- In Smartthings API
+ In Smartthings API  
  Go in and create your device handler using the file included above called "virtual device".  Save it and publish it.
  
- Assign the device type to the Arduino
+ Assign the device type to the Arduino  
  Going back to your devices, you need to find the arduino you just added.  Once there, edit the device and change the device type to the name of your device handler.
+ 
+ At this point, you should be able to test the security device and see the reed sensors light up your phone.  If you don't, then you should stop and go back over the directions.
 
 
  
