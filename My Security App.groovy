@@ -4,7 +4,7 @@
  *  Credit to CHRIS ETHERIDGE for the original template
  */
 definition(
-	name: "Subscribe Simulated Device to Arduino",
+	name: "Subscribe to Arduino (Contacts)",
 	namespace: "clh41413",
 	author: "Casey Hill",
 	description: "Subscribes and Updates Simulated Device Based on Arduino PINs",
@@ -20,10 +20,16 @@ preferences {
 		input "arduino", "capability.contactSensor", title: "Select...", required: true
     }
 	section("Select the simulated sensor you would like to attach to Zone 1") {
-        input "zone1", title: "Select...", "capability.contactSensor"
+        input "zone1", title: "Select...", "capability.contactSensor", required: true
 	}
     section("Select the simulated sensor you would like to attach to Zone 2") {
-        input "zone2", title: "Select...", "capability.contactSensor"
+        input "zone2", title: "Select...", "capability.contactSensor", required: false
+	}
+    section("Select the simulated sensor you would like to attach to Zone 3") {
+        input "zone3", title: "Select...", "capability.contactSensor", required: false
+	}
+    section("Select the simulated sensor you would like to attach to Zone 4") {
+        input "zone4", title: "Select...", "capability.contactSensor", required: false
 	}
 }
 
@@ -47,6 +53,10 @@ def subscribe()
         subscribe(arduino, "zone1.closed", zone1ClosedHandler)  
         subscribe(arduino, "zone2.open", zone2OpenHandler)
         subscribe(arduino, "zone2.closed", zone2ClosedHandler)   
+        subscribe(arduino, "zone3.open", zone3OpenHandler)
+        subscribe(arduino, "zone3.closed", zone3ClosedHandler) 
+         subscribe(arduino, "zone4.open", zone4OpenHandler)
+        subscribe(arduino, "zone4.closed", zone4ClosedHandler) 
  }
 
 def zone1OpenHandler(evt) {
@@ -69,3 +79,22 @@ def zone2ClosedHandler(evt) {
     zone2.close()
 }
 
+def zone3OpenHandler(evt) {
+    //log.debug "arduinoevent($evt.name: $evt.value: $evt.deviceId)"
+    zone3.open()
+}
+
+def zone3ClosedHandler(evt) {
+    //log.debug "arduinoevent($evt.name: $evt.value: $evt.deviceId)"
+    zone3.close()
+}
+
+def zone4OpenHandler(evt) {
+    //log.debug "arduinoevent($evt.name: $evt.value: $evt.deviceId)"
+    zone4.open()
+}
+
+def zone4ClosedHandler(evt) {
+    //log.debug "arduinoevent($evt.name: $evt.value: $evt.deviceId)"
+    zone4.close()
+}
